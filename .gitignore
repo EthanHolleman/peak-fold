@@ -6,3 +6,4 @@ output/
 *.pyc
 *.err
 *.out
+resources/mergedFiles
