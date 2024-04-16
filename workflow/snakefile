@@ -1,0 +1,24 @@
+import pandas as pd
+
+
+samples = pd.read_csv("samples/samples.grouped.tsv", sep="\t")
+groups = list(set(samples.group_id))
+
+
+rule all:
+    input:
+        expand(
+            "output/conpositeCalls/composite.calls.group.{group}.tsv",
+            group=groups
+        )
+
+
+rule make_composite_calls:
+    conda:
+        "envs/py.yml"
+    input:
+        lambda w: samples.loc[samples.group_id == int(w.group)].merge_path.to_list()
+    output:
+        out="output/conpositeCalls/composite.calls.group.{group}.tsv",
+    script:
+        "scripts/merge_conversions.py"
