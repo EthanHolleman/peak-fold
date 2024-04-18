@@ -9,8 +9,8 @@ rule all:
     input:
         expand(
             "output/foldedPeaksStats/composite.folded.stats.group.{group}.tsv",
-            group=groups,
-        ),
+            group=groups
+        )
 
 
 rule make_composite_calls:
@@ -46,7 +46,7 @@ rule add_sample_treatments:
     output:
         out="output/foldedPeaksTreatments/composite.folded.treat.group.{group}.tsv"
     script:
-        "workflow/scripts/merge_sample_table.py"
+        "scripts/merge_sample_table.py"
 
 
 rule add_folding_conversion_stats:
@@ -57,4 +57,4 @@ rule add_folding_conversion_stats:
     output:
         out="output/foldedPeaksStats/composite.folded.stats.group.{group}.tsv"
     script:
-        "add_fc_stats.py"
+        "scripts/add_fc_stats.py"
