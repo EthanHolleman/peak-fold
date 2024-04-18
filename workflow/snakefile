@@ -8,17 +8,51 @@ groups = list(set(samples.group_id))
 rule all:
     input:
         expand(
-            "output/conpositeCalls/composite.calls.group.{group}.tsv",
-            group=groups
-        )
+            "output/foldedPeaksStats/composite.folded.stats.group.{group}.tsv",
+            group=groups,
+        ),
 
 
 rule make_composite_calls:
     conda:
         "envs/py.yml"
     input:
-        lambda w: samples.loc[samples.group_id == int(w.group)].merge_path.to_list()
+        lambda w: samples.loc[samples.group_id == int(w.group)].merge_path.to_list(),
     output:
-        out="output/conpositeCalls/composite.calls.group.{group}.tsv",
+        out="output/compositeCalls/composite.calls.group.{group}.tsv",
     script:
         "scripts/merge_conversions.py"
+
+
+rule add_folding:
+    conda:
+        "envs/seqfold.yml"
+    input:
+        peaks="output/compositeCalls/composite.calls.group.{group}.tsv"
+    output:
+        out="output/foldedPeaks/composite.folded.group.{group}.tsv"
+    script:
+        "scripts/fold_peaks.py"
+
+
+rule add_sample_treatments:
+    conda:
+        "envs/py.yml"
+    input:
+        sample_df="../resources/sampleTable.tsv",
+        comp_df="output/foldedPeaks/composite.folded.group.{group}.tsv"
+    output:
+        out="output/foldedPeaksTreatments/composite.folded.treat.group.{group}.tsv"
+    script:
+        "workflow/scripts/merge_sample_table.py"
+
+
+rule add_folding_conversion_stats:
+    conda:
+        "envs/py.yml"
+    input:
+        comp_df="output/foldedPeaksTreatments/composite.folded.treat.group.{group}.tsv"
+    output:
+        out="output/foldedPeaksStats/composite.folded.stats.group.{group}.tsv"
+    script:
+        "add_fc_stats.py"
