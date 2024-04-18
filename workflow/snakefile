@@ -38,6 +38,8 @@ rule add_folding:
 rule add_sample_treatments:
     conda:
         "envs/py.yml"
+    resources:
+        mem_mb=6000
     input:
         sample_df="../resources/sampleTable.tsv",
         comp_df="output/foldedPeaks/composite.folded.group.{group}.tsv"
