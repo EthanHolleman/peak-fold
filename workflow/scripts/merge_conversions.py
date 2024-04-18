@@ -10,6 +10,14 @@ import pandas as pd
 # which marks 7 or 8 if any of the calls have 7 or 8 in that position
 
 def make_composite_call(peak_name, frames):
+    """Using grouped peaks (one peak will apear in the file more than once)
+    combine the peak calls into one, taking into account all the different
+    types of conversions.
+
+    Args:
+        peak_name (str): unique peak name
+        frames (list): List of all dataframes within a group
+    """
 
     peak = frames[0].loc[frames[0].PEAK_x == peak_name]
 
@@ -57,7 +65,6 @@ def main():
 
     # files from the same sample, strand and call type
     sample_files = snakemake.input
-    print(sample_files)
     frames = [pd.read_csv(sample, sep='\t') for sample in sample_files]
 
     print(frames)
